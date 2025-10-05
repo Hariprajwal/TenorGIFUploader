@@ -134,7 +134,7 @@ def setup_gemini(video_title, video_description, video_tags):
     global TAGS
     
     try:
-        genai.configure(api_key="AIzaSyCA_zjgfMu3nCEg0IA2ws57lICRYyggnsw")
+        genai.configure(api_key="YOR API KEY ")
         
         # Use the specified model
         model_name = "gemini-2.0-flash-exp"
