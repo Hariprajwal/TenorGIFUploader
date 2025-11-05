@@ -45,37 +45,34 @@ def cleanup_gifs_folders_and_videos():
             if os.path.isdir(item_path) and item.endswith('.gifs'):
                 gifs_folders.append(item)
         
-        # Count and display results
-        folder_count = len(gifs_folders)
-        
-        if folder_count == 0:
-            print("✅ No .gifs folders found to delete.")
-            return 0, 0
-        
-        print(f"📁 Found {folder_count} .gifs folder(s):")
-        for i, folder in enumerate(gifs_folders, 1):
-            print(f"  {i}. {folder}")
-        
-        # Find corresponding video files
-        video_files_to_delete = []
+        # Find pairs where both .gifs folder AND corresponding video file exist
+        deletion_pairs = []
         for folder in gifs_folders:
             video_file = find_video_file(folder, downloads_directory)
-            if video_file:
-                video_files_to_delete.append(video_file)
+            if video_file and os.path.exists(video_file):
+                deletion_pairs.append({
+                    'folder': folder,
+                    'folder_path': os.path.join(target_directory, folder),
+                    'video_file': video_file,
+                    'video_name': os.path.basename(video_file)
+                })
         
-        # Display video files that will be deleted
-        if video_files_to_delete:
-            print(f"\n🎬 Found {len(video_files_to_delete)} corresponding video file(s) in downloads:")
-            for i, video_file in enumerate(video_files_to_delete, 1):
-                print(f"  {i}. {os.path.basename(video_file)}")
-        else:
-            print("\nℹ️  No corresponding video files found in downloads directory.")
+        # Count results
+        pair_count = len(deletion_pairs)
+        
+        if pair_count == 0:
+            print("✅ No matching .gifs folder + video file pairs found to delete.")
+            print("ℹ️  Only deleting when BOTH .gifs folder AND video file exist.")
+            return 0, 0
+        
+        print(f"📁 Found {pair_count} .gifs folder + video file pair(s) (BOTH exist):")
+        for i, pair in enumerate(deletion_pairs, 1):
+            print(f"  {i}. {pair['folder']} + {pair['video_name']}")
         
         # Ask for confirmation before deletion
-        print(f"\n⚠️  WARNING: This will permanently delete:")
-        print(f"   - {folder_count} .gifs folder(s) from {target_directory}")
-        if video_files_to_delete:
-            print(f"   - {len(video_files_to_delete)} video file(s) from {downloads_directory}")
+        print(f"\n⚠️  WARNING: This will permanently delete {pair_count} pairs:")
+        print(f"   - .gifs folders from {target_directory}")
+        print(f"   - Corresponding video files from {downloads_directory}")
         print("   This action cannot be undone!")
         
         confirmation = input("\nType 'YES' to confirm deletion, or anything else to cancel: ").strip()
@@ -84,28 +81,28 @@ def cleanup_gifs_folders_and_videos():
             deleted_folder_count = 0
             deleted_video_count = 0
             
-            # Delete .gifs folders
-            for folder in gifs_folders:
-                folder_path = os.path.join(target_directory, folder)
+            # Delete both folders and videos
+            for pair in deletion_pairs:
+                # Delete .gifs folder
                 try:
-                    shutil.rmtree(folder_path)
-                    print(f"✅ Deleted folder: {folder}")
+                    shutil.rmtree(pair['folder_path'])
+                    print(f"✅ Deleted folder: {pair['folder']}")
                     deleted_folder_count += 1
                 except Exception as e:
-                    print(f"❌ Failed to delete folder {folder}: {e}")
-            
-            # Delete video files
-            for video_file in video_files_to_delete:
+                    print(f"❌ Failed to delete folder {pair['folder']}: {e}")
+                    continue  # Skip video deletion if folder deletion failed
+                
+                # Delete video file
                 try:
-                    os.remove(video_file)
-                    print(f"✅ Deleted video: {os.path.basename(video_file)}")
+                    os.remove(pair['video_file'])
+                    print(f"✅ Deleted video: {pair['video_name']}")
                     deleted_video_count += 1
                 except Exception as e:
-                    print(f"❌ Failed to delete video {os.path.basename(video_file)}: {e}")
+                    print(f"❌ Failed to delete video {pair['video_name']}: {e}")
             
             print(f"\n🎉 Cleanup completed!")
-            print(f"   - Deleted {deleted_folder_count} out of {folder_count} .gifs folder(s)")
-            print(f"   - Deleted {deleted_video_count} out of {len(video_files_to_delete)} video file(s)")
+            print(f"   - Deleted {deleted_folder_count} .gifs folder(s)")
+            print(f"   - Deleted {deleted_video_count} video file(s)")
             
             return deleted_folder_count, deleted_video_count
         else:
@@ -116,11 +113,95 @@ def cleanup_gifs_folders_and_videos():
         print(f"❌ Error during cleanup: {e}")
         return 0, 0
 
+# --- Additional function to show what WOULD be deleted ---
+def preview_cleanup():
+    """
+    Preview what would be deleted without actually deleting anything
+    """
+    target_directory = r"C:\Users\harip\ALL TEST"
+    downloads_directory = r"D:\downloads"
+    
+    print("\n🔍 PREVIEW MODE (No files will be deleted)")
+    print("=" * 50)
+    
+    if not os.path.exists(target_directory):
+        print(f"❌ Directory not found: {target_directory}")
+        return
+    
+    if not os.path.exists(downloads_directory):
+        print(f"❌ Downloads directory not found: {downloads_directory}")
+        return
+    
+    try:
+        # Get all items in the directory
+        all_items = os.listdir(target_directory)
+        
+        # Filter only folders that end with .gifs
+        gifs_folders = []
+        for item in all_items:
+            item_path = os.path.join(target_directory, item)
+            if os.path.isdir(item_path) and item.endswith('.gifs'):
+                gifs_folders.append(item)
+        
+        # Find pairs where both exist
+        deletion_pairs = []
+        folders_without_videos = []
+        videos_without_folders = []
+        
+        for folder in gifs_folders:
+            video_file = find_video_file(folder, downloads_directory)
+            if video_file and os.path.exists(video_file):
+                deletion_pairs.append({
+                    'folder': folder,
+                    'video_name': os.path.basename(video_file)
+                })
+            else:
+                folders_without_videos.append(folder)
+        
+        # Also find videos that don't have corresponding .gifs folders
+        for filename in os.listdir(downloads_directory):
+            name, ext = os.path.splitext(filename)
+            video_extensions = ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm']
+            if ext.lower() in video_extensions:
+                corresponding_folder = name + '.gifs'
+                if not os.path.exists(os.path.join(target_directory, corresponding_folder)):
+                    videos_without_folders.append(filename)
+        
+        # Display results
+        if deletion_pairs:
+            print(f"\n🎯 WOULD BE DELETED ({len(deletion_pairs)} pairs - BOTH exist):")
+            for i, pair in enumerate(deletion_pairs, 1):
+                print(f"  {i}. {pair['folder']} + {pair['video_name']}")
+        else:
+            print(f"\n✅ No .gifs folder + video file pairs found (nothing would be deleted)")
+        
+        if folders_without_videos:
+            print(f"\n📁 FOLDERS WITHOUT VIDEOS ({len(folders_without_videos)} - would NOT be deleted):")
+            for i, folder in enumerate(folders_without_videos, 1):
+                print(f"  {i}. {folder} (no matching video file)")
+        
+        if videos_without_folders:
+            print(f"\n🎬 VIDEOS WITHOUT FOLDERS ({len(videos_without_folders)} - would NOT be deleted):")
+            for i, video in enumerate(videos_without_folders, 1):
+                print(f"  {i}. {video} (no matching .gifs folder)")
+        
+        print(f"\n💡 Only pairs where BOTH .gifs folder AND video file exist will be deleted!")
+        
+    except Exception as e:
+        print(f"❌ Error during preview: {e}")
+
 # --- Main Program Execution ---
 if __name__ == "__main__":
     
     print("🧹 .GIFS FOLDER & VIDEO CLEANUP TOOL")
     print("=" * 50)
+    print("💡 Only deletes when BOTH .gifs folder AND video file exist!")
+    
+    # Ask if user wants to preview first
+    preview = input("\n🔍 Do you want to preview what would be deleted first? (y/n): ").strip().lower()
+    if preview == 'y' or preview == 'yes':
+        preview_cleanup()
+        print("\n" + "="*50)
     
     # Run the cleanup function
     deleted_folders, deleted_videos = cleanup_gifs_folders_and_videos()
