@@ -1,0 +1,133 @@
+import os
+import shutil
+
+def find_video_file(folder_name, downloads_path):
+    """
+    Find a video file in downloads directory that matches the folder name
+    (without the .gifs extension)
+    """
+    # Remove the .gifs extension from folder name
+    base_name = folder_name.replace('.gifs', '')
+    
+    # Common video file extensions
+    video_extensions = ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', 
+                       '.webm', '.m4v', '.3gp', '.mpeg', '.mpg', '.ts',
+                       '.mts', '.m2ts', '.vob', '.ogv', '.divx', '.xvid']
+    
+    # Search for files with the base name and any video extension
+    for filename in os.listdir(downloads_path):
+        name, ext = os.path.splitext(filename)
+        if name == base_name and ext.lower() in video_extensions:
+            return os.path.join(downloads_path, filename)
+    
+    return None
+
+def cleanup_gifs_folders_and_videos():
+    target_directory = r"C:\Users\harip\ALL TEST"
+    downloads_directory = r"D:\downloads"
+    
+    if not os.path.exists(target_directory):
+        print(f"❌ Directory not found: {target_directory}")
+        return 0, 0
+    
+    if not os.path.exists(downloads_directory):
+        print(f"❌ Downloads directory not found: {downloads_directory}")
+        return 0, 0
+    
+    try:
+        # Get all items in the directory
+        all_items = os.listdir(target_directory)
+        
+        # Filter only folders that end with .gifs
+        gifs_folders = []
+        for item in all_items:
+            item_path = os.path.join(target_directory, item)
+            if os.path.isdir(item_path) and item.endswith('.gifs'):
+                gifs_folders.append(item)
+        
+        # Count and display results
+        folder_count = len(gifs_folders)
+        
+        if folder_count == 0:
+            print("✅ No .gifs folders found to delete.")
+            return 0, 0
+        
+        print(f"📁 Found {folder_count} .gifs folder(s):")
+        for i, folder in enumerate(gifs_folders, 1):
+            print(f"  {i}. {folder}")
+        
+        # Find corresponding video files
+        video_files_to_delete = []
+        for folder in gifs_folders:
+            video_file = find_video_file(folder, downloads_directory)
+            if video_file:
+                video_files_to_delete.append(video_file)
+        
+        # Display video files that will be deleted
+        if video_files_to_delete:
+            print(f"\n🎬 Found {len(video_files_to_delete)} corresponding video file(s) in downloads:")
+            for i, video_file in enumerate(video_files_to_delete, 1):
+                print(f"  {i}. {os.path.basename(video_file)}")
+        else:
+            print("\nℹ️  No corresponding video files found in downloads directory.")
+        
+        # Ask for confirmation before deletion
+        print(f"\n⚠️  WARNING: This will permanently delete:")
+        print(f"   - {folder_count} .gifs folder(s) from {target_directory}")
+        if video_files_to_delete:
+            print(f"   - {len(video_files_to_delete)} video file(s) from {downloads_directory}")
+        print("   This action cannot be undone!")
+        
+        confirmation = input("\nType 'YES' to confirm deletion, or anything else to cancel: ").strip()
+        
+        if confirmation.upper() == 'YES':
+            deleted_folder_count = 0
+            deleted_video_count = 0
+            
+            # Delete .gifs folders
+            for folder in gifs_folders:
+                folder_path = os.path.join(target_directory, folder)
+                try:
+                    shutil.rmtree(folder_path)
+                    print(f"✅ Deleted folder: {folder}")
+                    deleted_folder_count += 1
+                except Exception as e:
+                    print(f"❌ Failed to delete folder {folder}: {e}")
+            
+            # Delete video files
+            for video_file in video_files_to_delete:
+                try:
+                    os.remove(video_file)
+                    print(f"✅ Deleted video: {os.path.basename(video_file)}")
+                    deleted_video_count += 1
+                except Exception as e:
+                    print(f"❌ Failed to delete video {os.path.basename(video_file)}: {e}")
+            
+            print(f"\n🎉 Cleanup completed!")
+            print(f"   - Deleted {deleted_folder_count} out of {folder_count} .gifs folder(s)")
+            print(f"   - Deleted {deleted_video_count} out of {len(video_files_to_delete)} video file(s)")
+            
+            return deleted_folder_count, deleted_video_count
+        else:
+            print("❌ Deletion cancelled by user.")
+            return 0, 0
+            
+    except Exception as e:
+        print(f"❌ Error during cleanup: {e}")
+        return 0, 0
+
+# --- Main Program Execution ---
+if __name__ == "__main__":
+    
+    print("🧹 .GIFS FOLDER & VIDEO CLEANUP TOOL")
+    print("=" * 50)
+    
+    # Run the cleanup function
+    deleted_folders, deleted_videos = cleanup_gifs_folders_and_videos()
+    
+    print(f"\n{'='*50}")
+    print("📊 CLEANUP SUMMARY")
+    print(f"{'='*50}")
+    print(f"🗑️  Folders deleted: {deleted_folders}")
+    print(f"🎬 Videos deleted: {deleted_videos}")
+    print("🎉 Operation completed!")
