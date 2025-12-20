@@ -184,7 +184,7 @@ def video_to_gifs(video_path, output_dir, clip_length=3, fps=15):
     else:
         use_logo = True
         print(f"✅ Logo file found: {LOGO_PATH}")
-        print("🖼️  Adding KRHP logo watermark to all GIFs (50% opacity, bottom center)...")
+        print("🖼️  Adding KRHP logo watermark to all GIFs (70% transparent, bottom-right corner)...")
 
     # Get video duration using ffprobe
     try:
@@ -223,7 +223,7 @@ def video_to_gifs(video_path, output_dir, clip_length=3, fps=15):
         output_path = os.path.join(output_dir, f"output_{i+1}.gif")
         
         if use_logo:
-            # ffmpeg command with logo watermark (50% opacity, bottom center)
+            # ffmpeg command with logo watermark (70% transparent = 30% opacity, bottom-right corner)
             command = [
                 "ffmpeg", "-y",
                 "-ss", str(start),
@@ -231,11 +231,11 @@ def video_to_gifs(video_path, output_dir, clip_length=3, fps=15):
                 "-i", video_path,
                 "-i", LOGO_PATH,  # Add logo as second input
                 "-filter_complex", 
-                # Scale video, then overlay logo with 50% opacity at bottom center
+                # Scale video, then overlay logo with 30% opacity at bottom-right corner
                 "[0:v]fps=15,scale=480:-1:flags=lanczos[bg];"
-                "[1:v]scale=150:-1[logo_scaled];"  # Scale logo to 150px width (adjustable)
-                "[logo_scaled]colorchannelmixer=aa=0.5[logo_transparent];"  # 50% opacity
-                "[bg][logo_transparent]overlay=(main_w-overlay_w)/2:(main_h-overlay_h-20)",
+                "[1:v]scale=80:-1[logo_scaled];"  # Scale logo to 80px width (smaller)
+                "[logo_scaled]colorchannelmixer=aa=0.3[logo_transparent];"  # 30% opacity (70% transparent)
+                "[bg][logo_transparent]overlay=main_w-overlay_w-10:main_h-overlay_h-10",  # Bottom-right corner
                 output_path
             ]
         else:
@@ -253,7 +253,7 @@ def video_to_gifs(video_path, output_dir, clip_length=3, fps=15):
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             if result.returncode == 0:
                 if use_logo:
-                    print(f"✅ Saved with logo: output_{i+1}.gif")
+                    print(f"✅ Saved with corner logo: output_{i+1}.gif")
                 else:
                     print(f"✅ Saved: output_{i+1}.gif")
                 successful_conversions += 1
@@ -279,7 +279,7 @@ def video_to_gifs(video_path, output_dir, clip_length=3, fps=15):
             print(f"❌ Error creating output_{i+1}.gif: {e}")
     
     if use_logo and successful_conversions > 0:
-        print(f"🎨 KRHP logo successfully added to {successful_conversions} GIFs!")
+        print(f"🎨 KRHP logo successfully added to {successful_conversions} GIFs (bottom-right corner, 70% transparent)!")
     print(f"📊 Successfully created {successful_conversions}/{num_clips} GIFs")
     return successful_conversions
 
@@ -824,7 +824,7 @@ if __name__ == "__main__":
         print("   GIFs will be created without watermark.")
         print("   Please place 'KRHP LOGO .png' in the same folder as this script.")
     else:
-        print(f"✅ Logo file found! GIFs will have KRHP logo watermark.")
+        print(f"✅ Logo file found! GIFs will have KRHP logo watermark (70% transparent, bottom-right corner).")
     
     # Get multiple video links from user
     video_links_input = input("Paste video URL(s) (separated by spaces or commas) and press Enter: ").strip()
@@ -867,7 +867,7 @@ if __name__ == "__main__":
     print(f"❌ Failed: {len(ALL_VIDEO_URLS) - successful_processed}/{len(ALL_VIDEO_URLS)} videos")
     print(f"🌟 Universal tag '{UNIVERSAL_TAG}' added to all GIFs!")
     if os.path.exists(LOGO_PATH):
-        print(f"🖼️  KRHP logo watermark added to all GIFs!")
+        print(f"🖼️  KRHP logo watermark added to all GIFs (bottom-right corner, 70% transparent)!")
     else:
         print(f"⚠️  No logo watermark added (logo file not found)")
     print("🎉 All operations completed!")
