@@ -1,4 +1,4 @@
-#🚀 TenorGIFUploader: Ultimate Desktop GIF Automation
+🚀 TenorGIFUploader: Ultimate Desktop GIF Automation
 TenorGIFUploader is a high-performance GUI application designed to streamline the process of uploading and managing GIFs on Tenor. Built with Python and Automation at its core, this tool eliminates the manual drag-and-drop fatigue by providing a seamless, "one-click" upload experience.
 
 ✨ Key Features
