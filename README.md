@@ -1,8 +1,4 @@
-Got it! My bad for the mix-up—if this is a GUI-based automation tool, that actually makes it much more valuable for the average user who doesn't want to touch a terminal.
-
-Since you use a Universal SEO Master Prompt, I’ve designed this README to hit all your high-performance marks: semantic hierarchy, keyword density for "Automation" and "GIF Management," and clear technical documentation.
-
-🚀 TenorGIFUploader: Ultimate Desktop GIF Automation
+#🚀 TenorGIFUploader: Ultimate Desktop GIF Automation
 TenorGIFUploader is a high-performance GUI application designed to streamline the process of uploading and managing GIFs on Tenor. Built with Python and Automation at its core, this tool eliminates the manual drag-and-drop fatigue by providing a seamless, "one-click" upload experience.
 
 ✨ Key Features
