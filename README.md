@@ -1,70 +1,43 @@
-🚀 TenorGIFUploader: Ultimate Desktop GIF Automation
-TenorGIFUploader is a high-performance GUI application designed to streamline the process of uploading and managing GIFs on Tenor. Built with Python and Automation at its core, this tool eliminates the manual drag-and-drop fatigue by providing a seamless, "one-click" upload experience.
+# 🚀 TenorGIFUploader  
+### Ultimate Desktop GIF Automation Tool for Tenor
 
-✨ Key Features
-Intuitive GUI: A clean, weightless interface designed for rapid interaction.
+**TenorGIFUploader** is a high-performance desktop application built to automate and streamline the process of uploading GIFs to Tenor. Designed with efficiency in mind, it eliminates repetitive manual tasks and enables a fast, scalable, and user-friendly upload workflow.
 
-Smart Automation: Automates the handshake between your local files and the Tenor API.
+---
 
-Bulk Tagging: Apply multiple SEO-friendly tags to your GIFs instantly to increase their visibility on the Tenor marketplace.
+## ✨ Features
 
-Live Upload Tracking: Real-time status updates to ensure your content is processed correctly.
+- **🖥 Intuitive GUI**  
+  Clean and lightweight interface for seamless interaction.
 
-API Integration: Securely handles Tenor API v2 protocols for high-speed data transfer.
+- **⚡ One-Click Upload Automation**  
+  Automates the entire upload pipeline from local files to Tenor.
 
-🛠 Tech Stack & Architecture
-This project leverages a robust stack to ensure stability and speed:
+- **🏷 Bulk Tagging System**  
+  Apply multiple SEO-optimized tags instantly to improve visibility.
 
-Language: Python 3.x
+- **📊 Live Upload Tracking**  
+  Real-time status updates for monitoring uploads.
 
-Frontend: Custom GUI (Tkinter/PyQt)
+- **🔐 Secure API Integration**  
+  Efficient and secure implementation of Tenor API v2.
 
-API: Tenor API v2 Implementation
+---
 
-Networking: Requests / Urllib3
+## 🛠 Tech Stack
 
-Automation Logic: Procedural asset handling for error-free uploads.
+| Layer        | Technology |
+|-------------|-----------|
+| Language     | Python 3.x |
+| GUI          | Tkinter / PyQt |
+| API          | Tenor API v2 |
+| Networking   | Requests / Urllib3 |
+| Architecture | Procedural Automation Logic |
 
-🚀 Getting Started
-1. Prerequisites
-A Tenor API Key (Get it from the Google Cloud Console).
+---
 
-Python installed on your system.
+## 📂 Project Structure
 
-2. Installation
-Clone the repository and install the necessary dependencies:
-
-Bash
-git clone https://github.com/Hariprajwal/TenorGIFUploader.git
-cd TenorGIFUploader
-pip install -r requirements.txt
-3. Usage
-Run the application and enter your API credentials:
-
-Bash
-python main.py
-📈 SEO & Visibility Strategy
-To ensure your GIFs get the most views on Tenor, this tool encourages a Tags-First approach. By leveraging the built-in tagging automation, you can ensure every upload is indexed for trending search terms.
-
-🤝 Contributing
-As an Engineering Student, I welcome contributions that improve the automation logic or the UI/UX of this tool.
-
-Fork the Project
-
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
-
-Commit your Changes (git commit -m 'Add some AmazingFeature')
-
-Push to the Branch (git push origin feature/AmazingFeature)
-
-Open a Pull Request
-
-👨‍💻 Author
-Hari Prajwal
-
-GitHub: @Hariprajwal
-
-Role: Software Developer & Automation Enthusiast
 
 # TenorGIFUploader
 A Python-based automation tool that uploads GIFs to Tenor using the Tenor API. Supports batch uploads, metadata customization, and easy authentication for creators and developers looking to manage their Tenor GIF collections efficiently.
